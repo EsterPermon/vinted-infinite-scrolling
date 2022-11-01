@@ -1,4 +1,4 @@
-import GalleryContainer from "./containers/GalleryContainer";
+import GalleryContainer from "./containers/Gallery";
 import { PaginationProvider } from "./contexts/PaginationContext";
 
 function App() {
