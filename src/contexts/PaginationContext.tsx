@@ -7,8 +7,13 @@ import {
   ReactElement,
 } from "react";
 import getImagesPerPage from "../api/images";
-import { PaginationContextType, Photo, RenderedImage } from "../types/Gallery";
+import { Photo, RenderedImage } from "../types/Gallery";
 import { API_KEY, GET_RECENT_URL, IMAGE_BASE_URL } from "../utils/constants";
+
+export type PaginationContextType = {
+  allImages: RenderedImage[];
+  nextPage: () => void;
+};
 
 const defaultValue = {
   allImages: [],
@@ -60,13 +65,14 @@ export const PaginationProvider = ({
     (photos: Photo[]): RenderedImage[] => {
       const images: RenderedImage[] = [];
       for (let i = 0; i < photos.length; i++) {
-        const { id, server, secret, title } = photos[i];
+        const { id, server, secret, title, owner } = photos[i];
         if (!allImagesIds.includes(id)) {
           setAllImagesIds((prevState) => [...prevState, id]);
           allImagesIds.push(id);
           images.push({
             id,
             title,
+            owner,
             src: `${IMAGE_BASE_URL}/${server}/${id}_${secret}.jpg`,
             isFavorited: false,
           });

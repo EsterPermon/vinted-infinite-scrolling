@@ -23,14 +23,10 @@ export type Gallery = {
   stat: string;
 };
 
-export type PaginationContextType = {
-  allImages: RenderedImage[];
-  nextPage: () => void;
-};
-
 export type RenderedImage = {
   id: string;
   title: string;
   src: string;
+  owner: string;
   isFavorited?: boolean;
 };
