@@ -11,13 +11,13 @@ import { PaginationContext } from "../../contexts/PaginationContext";
 import { GalleyStyledContainer } from "./styles";
 
 const GalleryContainer = () => {
-  const { allImages, nextPage } = useContext(PaginationContext);
+  const { allImageIds: allImagesIds, nextPage, imagesCount } = useContext(PaginationContext);
   const scrollContainerRef = useRef(null);
   const config: IntersectionObserverInit = useMemo(() => {
     return {
-      root: null,
+      root: document.querySelector("#scrollArea"),
       rootMargin: `${window.outerHeight}px`,
-      threshold: 0,
+      threshold: 1.0,
     };
   }, []);
 
@@ -43,14 +43,14 @@ const GalleryContainer = () => {
   }, [handleOnScroll]);
 
   const renderImages = useCallback((): ReactElement<HTMLImageElement>[] => {
-    return allImages.map((image) => {
-      const { id } = image;
-      return <ImageFrame key={id} image={image} />;
+    const arr = Array.from(allImagesIds.values());
+    return arr.map((id) => {
+      return <ImageFrame key={id} imageId={id} />;
     });
-  }, [JSON.stringify(allImages)]);
+  }, [imagesCount]);
 
   return (
-    <GalleyStyledContainer>
+    <GalleyStyledContainer id="scrollArea">
       {renderImages()}
       <div ref={scrollContainerRef} />
     </GalleyStyledContainer>

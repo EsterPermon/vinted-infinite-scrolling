@@ -6,18 +6,20 @@ import {
   useState,
   ReactElement,
 } from "react";
-import getImagesPerPage from "../api/images";
-import { Photo, RenderedImage } from "../types/Gallery";
-import { API_KEY, GET_RECENT_URL, IMAGE_BASE_URL } from "../utils/constants";
+import { getImageIdsPerPage } from "../api/images";
+import { API_KEY, GET_RECENT_URL } from "../utils/constants";
+import storage from "../utils/FavouriteStorage";
 
 export type PaginationContextType = {
-  allImages: RenderedImage[];
+  allImageIds: Set<string>;
   nextPage: () => void;
+  imagesCount: number;
 };
 
 const defaultValue = {
-  allImages: [],
+  allImageIds: new Set<string>(),
   nextPage: () => null,
+  imagesCount: 0,
 };
 
 export const PaginationContext =
@@ -30,22 +32,21 @@ export const PaginationProvider = ({
 }) => {
   const [currPage, setCurrPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [photos, setPhotos] = useState<Photo[]>([]);
-  const [allImages, setAllImages] = useState<RenderedImage[]>([]);
-  const [allImagesIds, setAllImagesIds] = useState<string[]>([]);
+  const [allImageIds, setAllImageIds] = useState<Set<string>>(new Set());
+  const [imagesCount, setImagesCount] = useState(allImageIds.size);
+  const { getFavourites } = storage;
 
   const pageURL = useMemo(() => {
-    return `${GET_RECENT_URL}&api_key=${API_KEY}&per_page=20&page=${currPage}&format=json&nojsoncallback=1`;
+    return `${GET_RECENT_URL}&api_key=${API_KEY}&per_page=20&page=${currPage}&safe_search=1&format=json&nojsoncallback=1`;
   }, [currPage]);
+
+  useEffect(() => {
+    fetchFavouriteImages();
+  }, []);
 
   useEffect(() => {
     loadImages();
   }, [currPage]);
-
-  useEffect(() => {
-    const images = getImagesToRender(photos);
-    setAllImages((prevState) => [...prevState, ...images]);
-  }, [JSON.stringify(photos)]);
 
   const nextPage = useCallback(() => {
     if (currPage < totalPages) {
@@ -53,42 +54,28 @@ export const PaginationProvider = ({
     }
   }, [currPage, totalPages]);
 
-  const loadImages = useCallback(() => {
-    getImagesPerPage(pageURL).then((response) => {
-      const { pages, photo: photos } = response;
-      setTotalPages(pages);
-      setPhotos(photos);
-    });
-  }, [pageURL]);
+  const fetchFavouriteImages = useCallback(async () => {
+    const favouritesIds = getFavourites();
+    if (favouritesIds.length) {
+      setImagesCount((prev) => prev + favouritesIds.length);
+      setAllImageIds((prev) => new Set([...prev, ...favouritesIds]));
+    }
+  }, [imagesCount]);
 
-  const getImagesToRender = useCallback(
-    (photos: Photo[]): RenderedImage[] => {
-      const images: RenderedImage[] = [];
-      for (let i = 0; i < photos.length; i++) {
-        const { id, server, secret, title, owner } = photos[i];
-        if (!allImagesIds.includes(id)) {
-          setAllImagesIds((prevState) => [...prevState, id]);
-          allImagesIds.push(id);
-          images.push({
-            id,
-            title,
-            owner,
-            src: `${IMAGE_BASE_URL}/${server}/${id}_${secret}.jpg`,
-            isFavorited: false,
-          });
-        }
-      }
-      return images;
-    },
-    [JSON.stringify(allImagesIds)]
-  );
+  const loadImages = useCallback(async () => {
+    const imagesPerPage = await getImageIdsPerPage(pageURL);
+    const { pages, imagesIds } = imagesPerPage;
+    setTotalPages(pages);
+    setImagesCount((prev) => prev + imagesIds.length);
+    setAllImageIds((prev) => new Set([...prev, ...imagesIds]));
+  }, [imagesCount]);
 
-  const value = useMemo(() => {
-    return { allImages, nextPage };
-  }, [JSON.stringify(allImagesIds)]);
+  const memoizedValue = useMemo(() => {
+    return { allImageIds, nextPage, imagesCount };
+  }, [imagesCount, currPage, totalPages]);
 
   return (
-    <PaginationContext.Provider value={value}>
+    <PaginationContext.Provider value={memoizedValue}>
       {children}
     </PaginationContext.Provider>
   );
