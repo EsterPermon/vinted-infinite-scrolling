@@ -18,8 +18,30 @@ export type Pagination = {
   photo: Photo[];
 };
 
-export type Gallery = {
+export type PageResponse = {
   photos: Pagination;
+  stat: string;
+};
+
+export type PageData = {
+  pages: number;
+  imagesIds: string[];
+};
+
+export type PhotoInfo = {
+  id: string;
+  owner: {
+    username: string;
+  };
+  title: {
+    _content: string;
+  };
+  secret: string;
+  server: string;
+};
+
+export type PhotoInfoResponse = {
+  photo: PhotoInfo;
   stat: string;
 };
 
@@ -28,5 +50,4 @@ export type RenderedImage = {
   title: string;
   src: string;
   owner: string;
-  isFavorited?: boolean;
 };

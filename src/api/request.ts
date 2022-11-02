@@ -1,7 +1,6 @@
-import { Gallery } from "../types/Gallery";
 import { BASE_URL } from "../utils/constants";
 
-export default (url: string, options: RequestInit): Promise<Gallery> => {
+export default (url: string, options: RequestInit): Promise<any> => {
   return fetch(`${BASE_URL}/${url}`, {
     ...options,
   })
@@ -14,6 +13,6 @@ export default (url: string, options: RequestInit): Promise<Gallery> => {
       return response.json();
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
     });
 };
