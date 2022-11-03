@@ -7,19 +7,21 @@ import {
   ReactElement,
 } from "react";
 import { getImageIdsPerPage } from "../api/images";
-import { API_KEY, GET_RECENT_URL } from "../utils/constants";
+import { API_KEY, GET_PHOTOS_BY_SEARCH_URL } from "../utils/constants";
 import storage from "../utils/FavouriteStorage";
 
 export type PaginationContextType = {
   allImageIds: Set<string>;
   nextPage: () => void;
   imagesCount: number;
+  hasNextPage: boolean
 };
 
 const defaultValue = {
   allImageIds: new Set<string>(),
   nextPage: () => null,
   imagesCount: 0,
+  hasNextPage: false
 };
 
 export const PaginationContext =
@@ -34,6 +36,7 @@ export const PaginationProvider = ({
   const [totalPages, setTotalPages] = useState(0);
   const [allImageIds, setAllImageIds] = useState<Set<string>>(new Set());
   const [imagesCount, setImagesCount] = useState(allImageIds.size);
+  const hasNextPage = useMemo(() => currPage < totalPages, [currPage, totalPages])
   const { getFavourites } = storage;
 
   const pageURL = useMemo(() => {
@@ -49,7 +52,7 @@ export const PaginationProvider = ({
   }, [currPage]);
 
   const nextPage = useCallback(() => {
-    if (currPage < totalPages) {
+    if (hasNextPage) {
       setCurrPage((prevState) => prevState + 1);
     }
   }, [currPage, totalPages]);
@@ -71,7 +74,7 @@ export const PaginationProvider = ({
   }, [imagesCount]);
 
   const memoizedValue = useMemo(() => {
-    return { allImageIds, nextPage, imagesCount };
+    return { allImageIds, nextPage, imagesCount, hasNextPage };
   }, [imagesCount, currPage, totalPages]);
 
   return (
