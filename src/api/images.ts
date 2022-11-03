@@ -1,19 +1,21 @@
-import { PageResponse, PageData, Photo, PhotoInfo, PhotoInfoResponse } from "../types/Gallery";
+import {
+  PageResponse,
+  PageData,
+  Photo,
+  PhotoInfo,
+  PhotoInfoResponse,
+} from "../types/Gallery";
 import request from "./request";
 
-export const getImageIdsPerPage = async (
-  url: string
-): Promise<PageData> => {
+export const getImageIdsPerPage = async (url: string): Promise<PageData> => {
   try {
     const response: PageResponse = await request(url, {
       method: "GET",
     });
     const { photos, stat } = response;
-    
-    if(stat === 'fail') {
-      throw new Error(
-        `Request error: error loading page`
-      );
+
+    if (stat === "fail") {
+      throw new Error(`Request error: error loading page`);
     }
 
     const { photo, pages } = photos;
@@ -23,7 +25,6 @@ export const getImageIdsPerPage = async (
       imagesIds,
     };
   } catch (error) {
-    console.log(error);
     return Promise.reject();
   }
 };
@@ -34,10 +35,8 @@ export const getImageInfo = async (url: string): Promise<PhotoInfo> => {
       method: "GET",
     });
     const { photo, stat } = response;
-    if(stat === 'fail') {
-      throw new Error(
-        `Request error: error getting photo`
-      );
+    if (stat === "fail") {
+      throw new Error(`Request error: error getting photo`);
     }
     const { id, owner, title, server, secret } = photo;
     return { id, owner, title, server, secret };

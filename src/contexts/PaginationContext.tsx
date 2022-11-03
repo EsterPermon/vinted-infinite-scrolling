@@ -37,7 +37,7 @@ export const PaginationProvider = ({
   const { getFavourites } = storage;
 
   const pageURL = useMemo(() => {
-    return `${GET_RECENT_URL}&api_key=${API_KEY}&per_page=20&page=${currPage}&safe_search=1&format=json&nojsoncallback=1`;
+    return `${GET_PHOTOS_BY_SEARCH_URL}&api_key=${API_KEY}&per_page=20&page=${currPage}&safe_search=1&format=json&nojsoncallback=1`;
   }, [currPage]);
 
   useEffect(() => {
