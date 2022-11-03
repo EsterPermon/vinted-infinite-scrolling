@@ -30,7 +30,7 @@ const GalleryContainer = () => {
     (entries: any) => {
       const target: IntersectionObserverEntry = entries[0];
       if (target.isIntersecting) {
-        nextPage();
+       nextPage();
       }
     },
     [nextPage]
@@ -54,8 +54,8 @@ const GalleryContainer = () => {
 
   const renderImages = useCallback((): ReactElement<HTMLImageElement>[] => {
     const arr = Array.from(allImagesIds.values());
-    return arr.map((id) => {
-      return <ImageFrame key={id} imageId={id} />;
+    return arr.map((id, i) => {
+      return <ImageFrame key={id} imageId={id} i={i} />;
     });
   }, [imagesCount]);
 

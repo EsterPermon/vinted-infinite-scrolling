@@ -1,0 +1,6 @@
+export const IMAGE_FRAME_DATA_CY = "frame"
+export const IMAGE_OVERLAY_DATA_CY = "overlay"
+export const IMAGE_FAVOURITE_BUTTON_DATA_CY = "favourite-button"
+export const IMAGE_OWNER_DATA_CY = "onwer"
+export const IMAGE_TITLE_DATA_CY = "title"
+export const FAVOURITE_IMAGE_DATA_CY = "favourite-image"

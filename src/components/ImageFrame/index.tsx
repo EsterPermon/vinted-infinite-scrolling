@@ -5,13 +5,18 @@ import { API_KEY, GET_PHOTO_URL, IMAGE_BASE_URL } from "../../utils/constants";
 import { getImageInfo } from "../../api/images";
 import ImageOverlay from "../ImageOverlay";
 import { useMemo } from "react";
+import { FAVOURITE_IMAGE_DATA_CY, IMAGE_FRAME_DATA_CY } from "../../utils/data-cy-constants";
+import storage from "../../utils/FavouriteStorage";
 
 type ImageFrameProps = {
   imageId: string;
+  i: number
 };
 
 const ImageFrame = (props: ImageFrameProps) => {
-  const { imageId } = props;
+  const { isImageFavourite } = storage;
+
+  const { imageId, i } = props;
   const emptyImage = useMemo(() => {
     return {
       id: "",
@@ -22,6 +27,8 @@ const ImageFrame = (props: ImageFrameProps) => {
   }, []);
   const [image, setImage] = useState<RenderedImage>(emptyImage);
   const [showOverlay, setShowOverlay] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(isImageFavourite(imageId));
+  const dataCy = useMemo(() => isFavorited ? `${FAVOURITE_IMAGE_DATA_CY}` : `${IMAGE_FRAME_DATA_CY}_${i}` , [isFavorited])
 
   useEffect(() => {
     fetchImageInfo(imageId);
@@ -44,10 +51,11 @@ const ImageFrame = (props: ImageFrameProps) => {
 
   return image.id ? (
     <ImageFrameStyledContainer
+      data-cy={dataCy}
       onMouseEnter={() => setShowOverlay(true)}
       onMouseLeave={() => setShowOverlay(false)}
     >
-      {showOverlay && <ImageOverlay image={image} />}
+      {showOverlay && <ImageOverlay image={image} isFavorited={isFavorited} setIsFavorited={setIsFavorited} />}
       <img src={image.src} alt={image.title} />
     </ImageFrameStyledContainer>
   ) : (
