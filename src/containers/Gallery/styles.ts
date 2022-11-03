@@ -7,6 +7,7 @@ export const GalleyStyledContainer = styled.div`
     display: grid;
     grid-auto-rows: 250px;
     grid-gap: 30px;
+    background-color:  #e7e7e7;
   }
   .sentinel {
     height: 20px;

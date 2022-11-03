@@ -1,4 +1,5 @@
 import {
+  lazy,
   ReactElement,
   useCallback,
   useContext,
@@ -6,9 +7,10 @@ import {
   useMemo,
   useRef,
 } from "react";
-import ImageFrame from "../../components/ImageFrame";
 import { PaginationContext } from "../../contexts/PaginationContext";
 import { GalleyStyledContainer } from "./styles";
+
+const ImageFrame = lazy(() => import ("../../components/ImageFrame"));
 
 const GalleryContainer = () => {
   const {

@@ -1,9 +1,8 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, lazy, useCallback, useEffect, useState } from "react";
 import { RenderedImage } from "../../types/Gallery";
 import { ImageFrameStyledContainer } from "./styles";
 import { API_KEY, GET_PHOTO_URL, IMAGE_BASE_URL } from "../../utils/constants";
 import { getImageInfo } from "../../api/images";
-import ImageOverlay from "../ImageOverlay";
 import { useMemo } from "react";
 import { FAVOURITE_IMAGE_DATA_CY, IMAGE_FRAME_DATA_CY } from "../../utils/data-cy-constants";
 import storage from "../../utils/FavouriteStorage";
@@ -12,6 +11,8 @@ type ImageFrameProps = {
   imageId: string;
   i: number
 };
+
+const ImageOverlay = lazy(() => import ("../ImageOverlay"));
 
 const ImageFrame = (props: ImageFrameProps) => {
   const { isImageFavourite } = storage;

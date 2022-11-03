@@ -4,9 +4,9 @@ export const ImageFrameStyledContainer = styled.div`
   position: relative;
   display: flex;
   justify-content: center;
-  border: 1px solid gray;
+  border: 1px solid #b2acac;
   border-radius: 5px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(200,190,200,0.4);;
 
   img {
     border-radius: 5px;
